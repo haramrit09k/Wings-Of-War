@@ -224,10 +224,10 @@ function update3()
     else if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)&&plane1.y<=650)
     {
         plane1.body.angularVelocity = 50;
-    }
+    }   
     else
     {
-    	if (plane1.body.angularVelocity > 0) 
+    	if (plane1.body.angularVelocity > 0)
     	{
     		plane1.body.angularVelocity = plane1.body.angularVelocity - 1;
     	}
