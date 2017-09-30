@@ -8,6 +8,10 @@ var logo;
 var ground;
 var sky;
 var plane1;
+var count = 0;
+var weapon;
+var cursors;
+var fireButton;
 
 //HOME PAGE
 var gameState0 = function()
@@ -84,7 +88,7 @@ function preload0()
 	game.load.image('back', 'assets/background/b2.jpg');
 	game.load.image('logo', 'assets/background/logo.png');
 	game.load.image('battle_button', 'assets/buttons/battle3.png');
-	// game.load.image('inst_button', 'assets/buttons/instrctions.jpg');
+	game.load.image('inst_button', 'assets/buttons/instrctions.jpg');
 };
 
 function create0()
@@ -165,50 +169,78 @@ function preload3()
 	game.load.image('ground', 'assets/background/platform.png');
 	game.load.image('sky', 'assets/background/sky.png');
 	game.load.image('plane1', 'assets/plane/p2.png');
+	game.load.audio('plane_flying', 'assets/audio/plane_flying.mp3');
+    game.load.spritesheet('bullet', 'assets/bullet.png', 300, 300);
 };
 
 function create3()
 {
 
+	game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+    game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
+	
 	game.physics.startSystem(Phaser.Physics.ARCADE);
 	game.physics.arcade.gravity.y = 100;
 
-
-	game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-    game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
+	//Plane Audio
+	plane_flying = game.add.audio('plane_flying', 1, true);
+	// plane_flying.addMarker('plane_flying', 0, 2);
+	
 
 	sky = game.add.sprite(0, 0, 'sky');
 	sky.scale.setTo(1.8,1.5);
 
 	plane1 = game.add.sprite(0, 702, 'plane1');
-	plane1.scale.setTo(0.20,0.20);
+	plane1.scale.setTo(0.15,0.15);
     game.physics.arcade.enable(plane1);
 	plane1.enableBody=true;
     plane1.body.bounce.y = 0;
     // plane1.body.collideWorldBounds = true;
 
-
 	ground = game.add.sprite(0, 735, 'ground');
 	ground.scale.setTo(3.5,1);
-
     ground.enableBody=true;   
     game.physics.arcade.enable(ground);
     ground.body.immovable=true;
     ground.body.collideWorldBounds = true;
-
   	// ground.body.checkCollision.up = true;
  	// ground.body.checkCollision.down = true;
-
-	
     
+    // plane_flying.loopFull(0.8);
+
+
+    //  Creates 1 single bullet, using the 'bullet' graphic
+    weapon = game.add.weapon(1, 'bullet');
+    // weapon.scale.setTo(0.3,0.3);             //NOT WORKING
+    // weapon.setSize(3, 3, 0 , 6);             //NOT WORKING
+
+    //  The bullet will be automatically killed when it leaves the world bounds
+    weapon.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS;
+
+    //  Because our bullet is drawn facing up, we need to offset its rotation:
+    weapon.bulletAngleOffset = 90;
+
+    //  The speed at which the bullet is fired
+    weapon.bulletSpeed = 700;
+
+    weapon.trackSprite(plane1, 50, 0, true);
+
+    fireButton = game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);
+
+
 };
 
 function update3()
-{
+{   
+    // weapon.bulletAngleOffset = plane1.angle;
+
+    if (fireButton.isDown) 
+    {
+        weapon.fire();
+    }
 
 	game.physics.arcade.overlap(plane1, ground, touch_ground, null, this);
-
-
+	
     if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT)&&plane1.y>650)
     {
         plane1.body.angularVelocity = -20;
@@ -242,6 +274,25 @@ function update3()
         game.physics.arcade.velocityFromAngle(plane1.angle, 300, plane1.body.velocity);
     }
 
+    if (game.input.keyboard.isDown(Phaser.Keyboard.UP))
+    {
+    	if (count == 0) {
+    		plane_flying.play('', 0, 1, true);
+    		count++;
+    	}
+    	else {
+        plane_flying.resume();
+    	}
+    }
+    else
+    {
+    	plane_flying.pause();
+    }
+
+    		console.log("Count = "+count);
+
+
+
     if (plane1.y <30)
     {
     	game.physics.arcade.velocityFromAngle(plane1.angle, 100, plane1.body.velocity);
@@ -260,9 +311,11 @@ function update3()
 
 function touch_ground()
 {
+    // plane_flying.pause();
+
 	console.log("touched");
 	plane1.body.velocity.x = 0;
-	plane1.body.velocity.y = -5;
+	plane1.body.velocity.y = -50;
 
 	if (plane1.y>710) 
 	{
