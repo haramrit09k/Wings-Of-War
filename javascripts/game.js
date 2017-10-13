@@ -8,10 +8,12 @@ var logo;
 var ground;
 var sky;
 var plane1;
+var plane2; //aarish 
 var count = 0;
 var weapon;
 var cursors;
 var fireButton;
+var w,a,ss,d;
 
 //HOME PAGE
 var gameState0 = function()
@@ -169,6 +171,7 @@ function preload3()
 	game.load.image('ground', 'assets/background/platform.png');
 	game.load.image('sky', 'assets/background/sky.png');
 	game.load.image('plane1', 'assets/plane/p2.png');
+	game.load.image('plane2', 'assets/plane/p3.png');  //Aarish
 	game.load.audio('plane_flying', 'assets/audio/plane_flying.mp3');
     game.load.spritesheet('bullet', 'assets/bullet.png', 300, 300);
 };
@@ -191,11 +194,19 @@ function create3()
 	sky.scale.setTo(1.8,1.5);
 
 	plane1 = game.add.sprite(0, 702, 'plane1');
+	plane2 = game.add.sprite(game.world.width-100, 702, 'plane2');  //Aarish 
 	plane1.scale.setTo(0.15,0.15);
+	plane2.scale.setTo(0.15,0.15);  //Aarish
+	// plane2.anchor.setTo(0.5, 1);
+
     game.physics.arcade.enable(plane1);
 	plane1.enableBody=true;
     plane1.body.bounce.y = 0;
     // plane1.body.collideWorldBounds = true;
+
+	game.physics.arcade.enable(plane2);
+	plane2.enableBody=true;
+    plane2.body.bounce.y = 0;
 
 	ground = game.add.sprite(0, 735, 'ground');
 	ground.scale.setTo(3.5,1);
@@ -224,36 +235,49 @@ function create3()
     weapon.bulletSpeed = 700;
 
     weapon.trackSprite(plane1, 50, 0, true);
+    weapon.trackSprite(plane2, 50, 0, true);
 
-    fireButton = game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);
+    fireButton_1 = game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);
+    fireButton_2 = game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);
 
-
+    w= game.input.keyboard.addKey(Phaser.Keyboard.W);
+    a= game.input.keyboard.addKey(Phaser.Keyboard.A);
+    ss= game.input.keyboard.addKey(Phaser.Keyboard.S);
+    d= game.input.keyboard.addKey(Phaser.Keyboard.D);
+    c= game.input.keyboard.addKey(Phaser.Keyboard.C);
+    v= game.input.keyboard.addKey(Phaser.Keyboard.V);
+	c= game.input.keyboard.addKey(Phaser.Keyboard.C);
+	
 };
 
 function update3()
 {   
     // weapon.bulletAngleOffset = plane1.angle;
 
+    //Plane1//////////////////
+
     if (fireButton.isDown) 
     {
         weapon.fire();
     }
 
-	game.physics.arcade.overlap(plane1, ground, touch_ground, null, this);
+	game.physics.arcade.overlap(plane1, ground, touch_ground_1, null, this);
+	game.physics.arcade.overlap(plane2, ground, touch_ground_2, null, this);
+
 	
-    if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT)&&plane1.y>650)
+    if (a.isDown && plane1.y>650)
     {
         plane1.body.angularVelocity = -20;
     }
-    else if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)&&plane1.y>650)
+    else if (d.isDown&&plane1.y>650)
     {
         plane1.body.angularVelocity = 20;
     }
-    else if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT)&&plane1.y<=650)
+    else if (a.isDown&&plane1.y<=650)
     {
         plane1.body.angularVelocity = -50;
     }
-    else if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)&&plane1.y<=650)
+    else if (d.isDown&&plane1.y<=650)
     {
         plane1.body.angularVelocity = 50;
     }   
@@ -269,12 +293,12 @@ function update3()
 	    }
     }
 	
-	if (game.input.keyboard.isDown(Phaser.Keyboard.UP))
+	if (w.isDown)
     {
         game.physics.arcade.velocityFromAngle(plane1.angle, 300, plane1.body.velocity);
     }
 
-    if (game.input.keyboard.isDown(Phaser.Keyboard.UP))
+    if (w.isDown)
     {
     	if (count == 0) {
     		plane_flying.play('', 0, 1, true);
@@ -299,6 +323,70 @@ function update3()
     	plane1.y = plane1.y + 10;
     }
 
+
+//Plane2//////////////////////////////////
+	
+	
+    if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT)&&plane2.y>650)
+    {
+        plane2.body.angularVelocity = -20;
+    }
+    else if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)&&plane2.y>650)
+    {
+        plane2.body.angularVelocity = 20;
+    }
+    else if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT)&&plane2.y<=650)
+    {
+        plane2.body.angularVelocity = -50;
+    }
+    else if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)&&plane2.y<=650)
+    {
+        plane2.body.angularVelocity = 50;
+    }   
+    else
+    {
+    	if (plane2.body.angularVelocity > 0)
+    	{
+    		plane2.body.angularVelocity = plane2.body.angularVelocity - 1;
+    	}
+	    else if (plane2.body.angularVelocity < 0) 
+	    {
+	    	plane2.body.angularVelocity = plane2.body.angularVelocity + 1;
+	    }
+    }
+	
+	if (game.input.keyboard.isDown(Phaser.Keyboard.UP))
+    {
+        game.physics.arcade.velocityFromAngle(plane2.angle, -300, plane2.body.velocity);
+    }
+
+    if (game.input.keyboard.isDown(Phaser.Keyboard.UP))
+    {
+    	if (count == 0) {
+    		plane_flying.play('', 0, 1, true);
+    		count++;
+    	}
+    	else {
+        plane_flying.resume();
+    	}
+    }
+    else
+    {
+    	plane_flying.pause();
+    }
+
+    		console.log("Count = "+count);
+
+
+
+    if (plane2.y <30)
+    {
+    	game.physics.arcade.velocityFromAngle(plane2.angle, 100, plane2.body.velocity);
+    	plane2.y = plane2.y + 10;
+    }    
+
+    //////////////////////////////////////////////////////////////////
+
     // game.debug.bodyInfo(plane1, 32, 32);
 
     // game.debug.body(plane1);
@@ -306,10 +394,11 @@ function update3()
 
     game.world.setBounds(0, 0, 1366, 768);
     game.world.wrap(plane1, 0, true);
+    game.world.wrap(plane2, 0, true);
 
 };
 
-function touch_ground()
+function touch_ground_1()
 {
     // plane_flying.pause();
 
@@ -320,6 +409,21 @@ function touch_ground()
 	if (plane1.y>710) 
 	{
 		plane1.y = 709;
+	}
+
+}
+
+function touch_ground_2()
+{
+    // plane_flying.pause();
+
+	console.log("touched");
+	plane2.body.velocity.x = 0;
+	plane2.body.velocity.y = -50;
+
+	if (plane2.y>710) 
+	{
+		plane2.y = 709;
 	}
 
 }
