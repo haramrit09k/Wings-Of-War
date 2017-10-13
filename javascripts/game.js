@@ -173,7 +173,7 @@ function preload3()
 	game.load.image('plane1', 'assets/plane/p2.png');
 	game.load.image('plane2', 'assets/plane/p3.png');  //Aarish
 	game.load.audio('plane_flying', 'assets/audio/plane_flying.mp3');
-    game.load.spritesheet('bullet', 'assets/bullet.png', 300, 300);
+    game.load.spritesheet('bullet', 'assets/fireball1.png');
 };
 
 function create3()
@@ -221,38 +221,24 @@ function create3()
 
 
     //  Creates 1 single bullet, using the 'bullet' graphic
-    bullet1 = game.add.weapon(1, 'bullet');
-    // weapon.scale.setTo(0.3,0.3);             //NOT WORKING
-    // weapon.setSize(3, 3, 0 , 6);             //NOT WORKING
-
+    bullet1 = game.add.weapon(2, 'bullet');
     //  The bullet will be automatically killed when it leaves the world bounds
     bullet1.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS;
-
     //  Because our bullet is drawn facing up, we need to offset its rotation:
-    bullet1.bulletAngleOffset = 90;
-
+    bullet1.bulletAngleOffset = 0;
     //  The speed at which the bullet is fired
     bullet1.bulletSpeed = 700;
-
-    bullet1.trackSprite(plane1, 50, 0, true);
+    bullet1.trackSprite(plane1, 0, 18, true);
     
 
-    bullet2 = game.add.weapon(1, 'bullet');
-    // weapon.scale.setTo(0.3,0.3);             //NOT WORKING
-    // weapon.setSize(3, 3, 0 , 6);             //NOT WORKING
-
+    bullet2 = game.add.weapon(2, 'bullet');
     //  The bullet will be automatically killed when it leaves the world bounds
     bullet2.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS;
-
     //  Because our bullet is drawn facing up, we need to offset its rotation:
-    bullet2.bulletAngleOffset = 270;
-
+    bullet2.bulletAngleOffset = 0;
     //  The speed at which the bullet is fired
     bullet2.bulletSpeed = -700;
-    bullet2.trackSprite(plane2, 50, 0, true);
-
-    // fireButton_1 = game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);
-    // fireButton_2 = game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);
+    bullet2.trackSprite(plane2, 0, 18, true);
 
     w= game.input.keyboard.addKey(Phaser.Keyboard.W);
     a= game.input.keyboard.addKey(Phaser.Keyboard.A);
