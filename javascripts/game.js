@@ -79,7 +79,7 @@ game.state.add('gameState0',gameState0);
 game.state.add('gameState1',gameState1);        
 game.state.add('gameState2',gameState2);        
 game.state.add('gameState3',gameState3);        
-game.state.start('gameState3'); // CHANGE IT TO 0 LATER
+game.state.start('gameState0'); // CHANGE IT TO 0 LATER
 
 
 
@@ -88,7 +88,7 @@ game.state.start('gameState3'); // CHANGE IT TO 0 LATER
 function preload0()
 {
 	game.load.image('back', 'assets/background/b2.jpg');
-	game.load.image('logo', 'assets/background/logo.png');
+	game.load.image('logo', 'assets/background/logo3.png');
 	game.load.image('battle_button', 'assets/buttons/battle3.png');
 	game.load.image('inst_button', 'assets/buttons/instrctions.jpg');
 };
@@ -101,8 +101,8 @@ function create0()
 	home_background = game.add.sprite(0, 0, 'back');
 	home_background.scale.setTo(1.9,1.6);
 
-	logo = game.add.sprite(40, 15, 'logo');
-	logo.scale.setTo(1,1);
+	logo = game.add.sprite(50, 45, 'logo');
+	logo.scale.setTo(1.2,1.2);
 
 	battle_button = game.add.button(1100, 500, 'battle_button', startgame, this, 2, 1, 0);
 	battle_button.scale.setTo(0.8,0.8);
