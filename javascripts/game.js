@@ -221,33 +221,55 @@ function create3()
 
 
     //  Creates 1 single bullet, using the 'bullet' graphic
-    weapon = game.add.weapon(1, 'bullet');
+    bullet1 = game.add.weapon(1, 'bullet');
     // weapon.scale.setTo(0.3,0.3);             //NOT WORKING
     // weapon.setSize(3, 3, 0 , 6);             //NOT WORKING
 
     //  The bullet will be automatically killed when it leaves the world bounds
-    weapon.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS;
+    bullet1.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS;
 
     //  Because our bullet is drawn facing up, we need to offset its rotation:
-    weapon.bulletAngleOffset = 90;
+    bullet1.bulletAngleOffset = 90;
 
     //  The speed at which the bullet is fired
-    weapon.bulletSpeed = 700;
+    bullet1.bulletSpeed = 700;
 
-    weapon.trackSprite(plane1, 50, 0, true);
-    weapon.trackSprite(plane2, 50, 0, true);
+    bullet1.trackSprite(plane1, 50, 0, true);
+    
 
-    fireButton_1 = game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);
-    fireButton_2 = game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);
+    bullet2 = game.add.weapon(1, 'bullet');
+    // weapon.scale.setTo(0.3,0.3);             //NOT WORKING
+    // weapon.setSize(3, 3, 0 , 6);             //NOT WORKING
+
+    //  The bullet will be automatically killed when it leaves the world bounds
+    bullet2.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS;
+
+    //  Because our bullet is drawn facing up, we need to offset its rotation:
+    bullet2.bulletAngleOffset = 270;
+
+    //  The speed at which the bullet is fired
+    bullet2.bulletSpeed = -700;
+    bullet2.trackSprite(plane2, 50, 0, true);
+
+    // fireButton_1 = game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);
+    // fireButton_2 = game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);
 
     w= game.input.keyboard.addKey(Phaser.Keyboard.W);
     a= game.input.keyboard.addKey(Phaser.Keyboard.A);
     ss= game.input.keyboard.addKey(Phaser.Keyboard.S);
     d= game.input.keyboard.addKey(Phaser.Keyboard.D);
+
     c= game.input.keyboard.addKey(Phaser.Keyboard.C);
     v= game.input.keyboard.addKey(Phaser.Keyboard.V);
 	c= game.input.keyboard.addKey(Phaser.Keyboard.C);
-	
+	k= game.input.keyboard.addKey(Phaser.Keyboard.K);
+	l= game.input.keyboard.addKey(Phaser.Keyboard.L);
+
+
+	// c is bullet for plane1
+	// v is nuke for plane1
+	// k is bullet for plane2
+	// l is nuke for plane2
 };
 
 function update3()
@@ -256,9 +278,14 @@ function update3()
 
     //Plane1//////////////////
 
-    if (fireButton.isDown) 
+    if (c.isDown) 
     {
-        weapon.fire();
+        bullet1.fire();
+    }
+
+    if (k.isDown) 
+    {
+        bullet2.fire();
     }
 
 	game.physics.arcade.overlap(plane1, ground, touch_ground_1, null, this);
