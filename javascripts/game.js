@@ -14,6 +14,7 @@ var weapon;
 var cursors;
 var fireButton;
 var w,a,ss,d;
+var healthBar;
 
 //HOME PAGE
 var gameState0 = function()
@@ -79,7 +80,7 @@ game.state.add('gameState0',gameState0);
 game.state.add('gameState1',gameState1);        
 game.state.add('gameState2',gameState2);        
 game.state.add('gameState3',gameState3);        
-game.state.start('gameState0'); // CHANGE IT TO 0 LATER
+game.state.start('gameState3'); // CHANGE IT TO 0 LATER
 
 
 
@@ -179,6 +180,14 @@ function preload3()
 function create3()
 {
 
+    // create: function() {    
+    //     var barConfig = {x: 200, y: 100};
+    //     this.myHealthBar = new HealthBar(this.game, barConfig);
+    // }
+    // var HealthBar = require('HealthBar.js');
+    // var barConfig = {x: 200, y: 100};
+    // this.myHealthBar = new HealthBar(this.game, barConfig);
+
 	game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
     game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
 	
@@ -192,6 +201,26 @@ function create3()
 
 	sky = game.add.sprite(0, 0, 'sky');
 	sky.scale.setTo(1.8,1.5);
+
+    bmd_1 = game.add.bitmapData(1400,40);
+    bmd_1.ctx.beginPath();
+    bmd_1.ctx.rect(0,0,300,40);
+    bmd_1.ctx.fillStyle = 'black';
+    bmd_1.ctx.fill();
+
+    healthBar_1 = game.add.sprite(0,0,bmd_1);
+    healthBar_1.anchor.y = 0.5;
+
+    // console.log(game.world.width);
+
+    bmd_2 = game.add.bitmapData(1400,40);
+    bmd_2.ctx.beginPath();
+    bmd_2.ctx.rect(1066,0,300,40);
+    bmd_2.ctx.fillStyle = 'black';
+    bmd_2.ctx.fill();
+
+    healthBar_2 = game.add.sprite(0,0,bmd_2);
+    healthBar_2.anchor.y = 0.5;
 
 	plane1 = game.add.sprite(0, 702, 'plane1');
 	plane2 = game.add.sprite(game.world.width-100, 702, 'plane2');  //Aarish 
@@ -240,6 +269,9 @@ function create3()
     bullet2.bulletSpeed = -700;
     bullet2.trackSprite(plane2, 0, 18, true);
 
+    game.physics.enable(bullet1, Phaser.Physics.ARCADE);
+    game.physics.enable(bullet2, Phaser.Physics.ARCADE);
+
     w= game.input.keyboard.addKey(Phaser.Keyboard.W);
     a= game.input.keyboard.addKey(Phaser.Keyboard.A);
     ss= game.input.keyboard.addKey(Phaser.Keyboard.S);
@@ -275,7 +307,9 @@ function update3()
     }
 
 	game.physics.arcade.overlap(plane1, ground, touch_ground_1, null, this);
-	game.physics.arcade.overlap(plane2, ground, touch_ground_2, null, this);
+	game.physics.arcade.overlap(plane2, ground, touch_ground_2, null, this);    
+    game.physics.arcade.collide(plane1, bullet2, hit_1, null , this);
+    game.physics.arcade.overlap(plane2, bullet1, hit_2, null , this);
 
 	
     if (a.isDown && plane1.y>650)
@@ -326,7 +360,7 @@ function update3()
     	plane_flying.pause();
     }
 
-    		console.log("Count = "+count);
+    		// console.log("Count = "+count);
 
 
 
@@ -388,7 +422,7 @@ function update3()
     	plane_flying.pause();
     }
 
-    		console.log("Count = "+count);
+    		// console.log("Count = "+count);
 
 
 
@@ -409,13 +443,39 @@ function update3()
     game.world.wrap(plane1, 0, true);
     game.world.wrap(plane2, 0, true);
 
-};
+}
+
+function hit_1(plane1, bullet2)
+{
+    console.log("In hit1");
+
+    bullet2.kill();
+    healthBar_1.width-= 10;
+
+    if(healthBar_1.width == 0)
+    {
+        //insert code here  
+    }
+}
+
+function hit_2(plane2, bullet1)
+{
+    console.log("In hit2");
+
+    bullet1.kill();
+    healthBar_2.width-= 10;
+
+    if(healthBar_2.width == 0)
+    {
+        //insert code here  
+    }
+}
 
 function touch_ground_1()
 {
     // plane_flying.pause();
 
-	console.log("touched");
+	// console.log("touched");
 	plane1.body.velocity.x = 0;
 	plane1.body.velocity.y = -50;
 
@@ -430,7 +490,7 @@ function touch_ground_2()
 {
     // plane_flying.pause();
 
-	console.log("touched");
+	// console.log("touched");
 	plane2.body.velocity.x = 0;
 	plane2.body.velocity.y = -50;
 
