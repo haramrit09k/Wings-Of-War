@@ -170,7 +170,7 @@ function create0()
 	battle_button = game.add.button(1100, 500, 'battle_button', startgame, this, 2, 1, 0);
 	battle_button.scale.setTo(0.8,0.8);
 
-	fullButton = game.add.button(1250, 30, 'fullButton', goFull, this, 2, 1, 0);
+	fullButton = game.add.button(1250, 20, 'fullButton', goFull, this, 2, 1, 0);
 	fullButton.scale.setTo(0.1,0.1);
 
     user1  = prompt("Enter name of player 1");
