@@ -29,7 +29,7 @@ var user2;
 var user;
 var player;
 var timeoutflag= 1;
-
+var blast;
 
 //HOME PAGE
 var gameState0 = function()
@@ -141,7 +141,7 @@ game.state.add('gameState1',gameState1);    // leaderboard
 game.state.add('gameState2',gameState2);        
 game.state.add('gameState3',gameState3);        
 game.state.add('gameState4',gameState4);        
-game.state.start('gameState4'); // CHANGE IT TO 0 LATER
+game.state.start('gameState3'); // CHANGE IT TO 0 LATER
 
 
 
@@ -295,6 +295,7 @@ function preload3()
 	game.load.image('plane2', 'assets/plane/p3.png');  //Aarish
 	game.load.audio('plane_flying', 'assets/audio/plane_flying.mp3');
     game.load.image('bullet', 'assets/fireball1.png');
+    game.load.spritesheet('blast', 'assets/bullet_hit.png',512,512);
 };
 
 function create3()
@@ -370,7 +371,7 @@ function create3()
 
 
     //  Creates 1 single bullet, using the 'bullet' graphic
-    bullet1 = game.add.weapon(2, 'bullet');
+    bullet1 = game.add.weapon(1, 'bullet');
     //  The bullet will be automatically killed when it leaves the world bounds
     bullet1.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS;
     //  Because our bullet is drawn facing up, we need to offset its rotation:
@@ -380,7 +381,7 @@ function create3()
     bullet1.trackSprite(plane1, 0, 18, true);
     
 
-    bullet2 = game.add.weapon(2, 'bullet');
+    bullet2 = game.add.weapon(1, 'bullet');
     //  The bullet will be automatically killed when it leaves the world bounds
     bullet2.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS;
     //  Because our bullet is drawn facing up, we need to offset its rotation:
@@ -615,6 +616,14 @@ function update3()
 function hit_1(plane1, bullet2)
 {
     // console.log("In hit1");
+    blast = game.add.sprite(plane1.x,plane1.y,'blast');
+    blast.scale.setTo(0.05,0.05);
+    blast.animations.add('blastHim',[0,1,2,3,4,5,6,7,8],100,false);
+    blast.animations.play('blastHim');
+    setTimeout(function(){ 
+        blast.scale.setTo(0.00000005,0.00000005);
+        blast.visible=false;
+     },5);
 
     bullet2.kill();
     healthBar_1.width-= 10;
@@ -632,6 +641,14 @@ function hit_1(plane1, bullet2)
 function hit_2(plane2, bullet1)
 {
     console.log("In hit2");
+    blast = game.add.sprite(plane2.x,plane2.y,'blast');
+    blast.scale.setTo(0.05,0.05);
+    blast.animations.add('blastHim',[0,1,2,3,4,5,6,7,8],100,false);
+    blast.animations.play('blastHim');
+    setTimeout(function(){ 
+        blast.scale.setTo(0.00000005,0.00000005);
+        blast.visible=false;
+     },5);
 
     bullet1.kill();
     healthBar_2.width+= 2.8;
