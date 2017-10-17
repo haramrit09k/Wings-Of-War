@@ -30,6 +30,10 @@ var user;
 var player;
 var timeoutflag= 1;
 var blast;
+var u1t;
+var u2t;
+var bullet_fire;
+var bullet_hit;
 
 //HOME PAGE
 var gameState0 = function()
@@ -101,23 +105,23 @@ gameState3.prototype={
  
     var currentTime = new Date();
     var timeDifference = me.startTime.getTime() - currentTime.getTime();
-    console.log("timeDifference= "+timeDifference);
+    // console.log("timeDifference= "+timeDifference);
  
     //Time elapsed in seconds
     me.timeElapsed = Math.abs(timeDifference / 1000);
-    console.log("timeElapsed= "+me.timeElapsed);
+    // console.log("timeElapsed= "+me.timeElapsed);
  
     //Time remaining in seconds
     //var timeRemaining = me.totalTime - me.timeElapsed; 
     var timeRemaining = 65- me.timeElapsed;
-    console.log("timeRemaining= "+timeRemaining);
+    // console.log("timeRemaining= "+timeRemaining);
  
     //Convert seconds into minutes and seconds
     minutes = Math.floor(timeRemaining / 60);
-    console.log("minutes= "+minutes);
+    // console.log("minutes= "+minutes);
 
     seconds = Math.floor(timeRemaining) - (60 * minutes);
-    console.log("seconds= "+seconds);
+    // console.log("seconds= "+seconds);
 
     //Display minutes, add a 0 to the start if less than 10
     var result = (minutes < 10) ? "0" + minutes : minutes; 
@@ -126,7 +130,7 @@ gameState3.prototype={
     result += (seconds < 10) ? ":0" + seconds : ":" + seconds;
  
     me.timeLabel.text = result;
-    console.log("result= "+result);
+    // console.log("result= "+result);
     }
 };
 
@@ -176,7 +180,9 @@ function create0()
 	fullButton.scale.setTo(0.1,0.1);
 
     user1  = prompt("Enter name of player 1");
+   
     user2  = prompt("Enter name of player 2");
+    
 
 };
 
@@ -299,7 +305,9 @@ function preload3()
 	game.load.image('sky', 'assets/background/orange2.png');
 	game.load.image('plane1', 'assets/plane/p2.png');
 	game.load.image('plane2', 'assets/plane/p3.png');  //Aarish
-	game.load.audio('plane_flying', 'assets/audio/plane_flying.mp3');
+    game.load.audio('plane_flying', 'assets/audio/plane_flying.mp3');
+    game.load.audio('bullet_fire', 'assets/audio/bullet_fire.mp3');
+	game.load.audio('bullet_hit', 'assets/audio/bullet_hit.mp3');
     game.load.image('bullet', 'assets/fireball1.png');
     game.load.spritesheet('blast', 'assets/bullet_hit.png',512,512);
 };
@@ -322,7 +330,9 @@ function create3()
 	game.physics.arcade.gravity.y = 100;
 
 	//Plane Audio
-	plane_flying = game.add.audio('plane_flying', 1, true);
+    plane_flying = game.add.audio('plane_flying', 1, true);
+    bullet_hit = game.add.audio('bullet_hit', 1, true);
+	bullet_fire = game.add.audio('bullet_fire', 1, true);
 	// plane_flying.addMarker('plane_flying', 0, 2);
 	
 
@@ -335,6 +345,11 @@ function create3()
     bmd_1.ctx.fillStyle = 'black';
     bmd_1.ctx.fill();
 
+    user1 = "akash";
+    user2 = "aarish";
+
+    u1t = game.add.text(50,25,user1,{ font:'25px Algerian', fill: '#fff'});
+    u1t.anchor.setTo(0,0);
     healthBar_1 = game.add.sprite(0,0,bmd_1);
     healthBar_1.anchor.y = 0.5;
 
@@ -346,14 +361,17 @@ function create3()
     bmd_2.ctx.fillStyle = 'black';
     bmd_2.ctx.fill();
 
+    u2t = game.add.text(1310,25,user2,{ font:'25px Algerian', fill: '#fff'});
+    u2t.anchor.setTo(0.99,0);
     healthBar_2 = game.add.sprite(0,0,bmd_2);
     healthBar_2.anchor.y = 0.5;
 
-	plane1 = game.add.sprite(0, 702, 'plane1');
+	plane1 = game.add.sprite(25, 702, 'plane1');
 	plane2 = game.add.sprite(game.world.width-100, 702, 'plane2');  //Aarish 
 	plane1.scale.setTo(0.15,0.15);
 	plane2.scale.setTo(0.15,0.15);  //Aarish
-	// plane2.anchor.setTo(0.5, 1);
+    // plane1.anchor.setTo(0.5, 0.5);
+	// plane2.anchor.setTo(0.5, 0.5);
 
     game.physics.arcade.enable(plane1);
 	plane1.enableBody=true;
@@ -429,10 +447,10 @@ function create3()
     {
 
         me.updateTimer();
-        if (minutes==0&&seconds==59) //&&timeoutflag==1) 
+        if (minutes<0) //&&timeoutflag==1) 
         {
-            // console.log("time up");
-            // game.state.start('gameState3');
+            console.log("time up");
+            game.state.start('gameState1');
             // timeoutflag=0;
         }
     });
@@ -448,11 +466,13 @@ function update3()
     if (c.isDown) 
     {
         bullet1.fire();
+        bullet_fire.play('', 0, 1, false);
     }
 
     if (k.isDown) 
     {
         bullet2.fire();
+        bullet_fire.play('', 0, 1, false);
     }
 
 	game.physics.arcade.overlap(plane1, ground, touch_ground_1, null, this);
@@ -611,10 +631,14 @@ function update3()
     game.world.wrap(plane1, 0, true);
     game.world.wrap(plane2, 0, true);
 
+    console.log(plane1.angle);
+    // console.log(plane2.angle);
+
 }
 
 function hit_1(plane1, bullet2)
 {
+    bullet_hit.play('', 0, 1, false);
     // console.log("In hit1");
     blast = game.add.sprite(plane1.x,plane1.y,'blast');
     blast.scale.setTo(0.05,0.05);
@@ -640,6 +664,7 @@ function hit_1(plane1, bullet2)
 
 function hit_2(plane2, bullet1)
 {
+    bullet_hit.play('', 0, 1, false);
     console.log("In hit2");
     blast = game.add.sprite(plane2.x,plane2.y,'blast');
     blast.scale.setTo(0.05,0.05);
@@ -666,15 +691,25 @@ function hit_2(plane2, bullet1)
 function touch_ground_1()
 {
     // plane_flying.pause();
+    if (plane1.angle>-10&&plane1.angle<15) 
+    {
+        plane1.angle = 0;
+        plane1.body.velocity.x = 0;
+        plane1.body.velocity.y = -15;
 
+        if (plane1.y>720) 
+        {
+            plane1.y = 719;
+        }
+    }
+    else{
+
+            player2 = 1;
+            game.state.start('gameState1');
+    
+    }
 	// console.log("touched");
-	plane1.body.velocity.x = 0;
-	plane1.body.velocity.y = -15;
-
-	if (plane1.y>720) 
-	{
-		plane1.y = 719;
-	}
+	
 
 }
 
@@ -683,13 +718,27 @@ function touch_ground_2()
     // plane_flying.pause();
 
 	// console.log("touched");
-	plane2.body.velocity.x = 0;
-	plane2.body.velocity.y = -15;
+    if (plane2.angle>-10&&plane2.angle<15) 
+    {
+        plane2.angle = 0;
+        plane2.body.velocity.x = 0;
+        plane2.body.velocity.y = -15;
 
-	if (plane2.y>720) 
-	{
-		plane2.y = 719;
-	}
+        if (plane2.y>720) 
+        {
+            plane2.y = 719;
+        }
+    }
+    else{
+
+            player1 = 1;
+            game.state.start('gameState1');
+    
+    }
+
+	
+
+	
 
 }
 
