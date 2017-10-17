@@ -141,7 +141,9 @@ game.state.add('gameState1',gameState1);    // leaderboard
 game.state.add('gameState2',gameState2);        
 game.state.add('gameState3',gameState3);        
 game.state.add('gameState4',gameState4);        
+
 game.state.start('gameState3'); // CHANGE IT TO 0 LATER
+
 
 
 
@@ -153,6 +155,7 @@ function preload0()
 	game.load.image('logo', 'assets/background/logo3.png');
 	game.load.image('battle_button', 'assets/buttons/battle3.png');
 	game.load.image('inst_button', 'assets/buttons/instrctions.jpg');
+	game.load.image('fullButton', 'assets/buttons/full.png');
 };
 
 function create0()
@@ -168,6 +171,9 @@ function create0()
 
 	battle_button = game.add.button(1100, 500, 'battle_button', startgame, this, 2, 1, 0);
 	battle_button.scale.setTo(0.8,0.8);
+
+	fullButton = game.add.button(1250, 20, 'fullButton', goFull, this, 2, 1, 0);
+	fullButton.scale.setTo(0.1,0.1);
 
     user1  = prompt("Enter name of player 1");
     user2  = prompt("Enter name of player 2");
@@ -506,14 +512,11 @@ function update3()
 
     		// console.log("Count = "+count);
 
-
-
     if (plane1.y <30)
     {
     	game.physics.arcade.velocityFromAngle(plane1.angle, 100, plane1.body.velocity);
     	plane1.y = plane1.y + 10;
     }
-
 
 //Plane2//////////////////////////////////
 	
@@ -565,10 +568,7 @@ function update3()
     {
     	plane_flying.pause();
     }
-
     		// console.log("Count = "+count);
-
-
 
     if (plane2.y <30)
     {
@@ -691,6 +691,17 @@ function touch_ground_2()
 		plane2.y = 719;
 	}
 
+}
+
+function goFull() {
+
+    if (game.scale.isFullScreen){
+            game.scale.stopFullScreen();
+    }
+    
+    else{    
+        game.scale.startFullScreen(false);
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
