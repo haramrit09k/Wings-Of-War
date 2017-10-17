@@ -37,7 +37,7 @@ var gameState0 = function()
 
 };
 
-//INSTRUCTIONS
+//LEADERBOARD
 var gameState1 = function(){
     
 };
@@ -52,7 +52,7 @@ var gameState3=function() {
 
 };
 
-//END PAGE WITH SCORE AND NAVIGATION BUTTONS
+//INSTRUCTIONS
 var gameState4 = function()
 {
 
@@ -140,7 +140,8 @@ game.state.add('gameState0',gameState0);
 game.state.add('gameState1',gameState1);    // leaderboard    
 game.state.add('gameState2',gameState2);        
 game.state.add('gameState3',gameState3);        
-game.state.start('gameState1'); // CHANGE IT TO 0 LATER
+game.state.add('gameState4',gameState4);        
+game.state.start('gameState4'); // CHANGE IT TO 0 LATER
 
 
 
@@ -679,14 +680,53 @@ function touch_ground_2()
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 function preload4()
 {
-
+    game.load.image("background", "assets/background/instr_bg.jpg");
+    game.load.image("movement1", "assets/instructions/wasd.png");
+    game.load.image("movement2", "assets/instructions/arrow.png");
+    game.load.image("c", "assets/instructions/c.png");
+    game.load.image("v", "assets/instructions/v.png");
+    game.load.image("k", "assets/instructions/k.png");
+    game.load.image("l", "assets/instructions/l.png");
 };
 
 function create4()
 {
+
+    var bg = game.add.sprite(0,0,'background');
+    bg.scale.setTo(0.7,0.75);
+
+    var movement1 = game.add.sprite(400,200,'movement1');
+    movement1.scale.setTo(0.6,0.6);
+
+    var movement2 = game.add.sprite(720,200,'movement2');
+    movement2.scale.setTo(0.5,0.5);
+
+    var c = game.add.sprite(450,400,'c');
+    c.scale.setTo(0.1,0.1);
+
+    var v = game.add.sprite(450,550,'v');
+    v.scale.setTo(0.1,0.1);
+
+    var k = game.add.sprite(780,400,'k');
+    k.scale.setTo(0.1,0.1);
+
+    var l = game.add.sprite(780,550,'l');
+    l.scale.setTo(0.1,0.1);
+
+
+    // game.stage.backgroundColor = "#4488AA";   //Setting solid background color
+    var text2 = game.add.text(game.world.width/2-150,0,'INSTRUCTIONS\n',{font:'bold 48px Impact', fill: '#000', boundsAlignH: "center", boundsAlignV: "middle"  });
+        
+    var text3 = game.add.text(450,100,'Player 1\n',{ font:'28px Impact', fill: '#000'});
+    var text4 = game.add.text(750,100,'Player 2\n',{ font:'28px Impact', fill: '#000'});
+
+    text2 = game.add.text(200,250,'Movement\n',{ font:'28px Impact', fill: '#000'})
+    text2 = game.add.text(200,400,'Bullets\n',{ font:'28px Impact', fill: '#000'})
+    text2 = game.add.text(200,550,'Nuke\n',{ font:'28px Impact', fill: '#000'})
+    // text3.anchor.setTo(0.5,0.5);
+
 
 };
 
