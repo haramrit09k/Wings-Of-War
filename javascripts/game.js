@@ -190,13 +190,13 @@ function startgame()
 
 function preload1()
 {
-    game.load.image('leaderboard', 'assets/background/leaderboard.jpeg');
+    game.load.image('leaderboard', 'assets/background/leaderboard.jpg');
 };
 
 function create1()
 {
     var leaderboard_background = game.add.sprite(0, 0, 'leaderboard');
-    leaderboard_background.scale.setTo(4,4);
+    leaderboard_background.scale.setTo(0.818,0.75);
 
     if (player1==1) 
     {
