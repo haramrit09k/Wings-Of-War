@@ -28,6 +28,7 @@ var user1;
 var user2;
 var user;
 var player;
+var timeoutflag= 1;
 
 
 //HOME PAGE
@@ -87,7 +88,7 @@ gameState3.prototype={
  
     var me = this;
     
-    me.timeLabel = me.game.add.text(game.world.width/2 - 30, 25, "00:00", {font: "100px Arial", fill: "#000"}); 
+    me.timeLabel = me.game.add.text(game.world.width/2 - 30, 25, "01:30", {font: "100px Arial", fill: "#000"}); 
     me.timeLabel.anchor.setTo(0.5, 0);
     me.timeLabel.align = 'center';
     me.timeLabel.scale.setTo(0.4,0.4);
@@ -100,18 +101,24 @@ gameState3.prototype={
  
     var currentTime = new Date();
     var timeDifference = me.startTime.getTime() - currentTime.getTime();
+    console.log("timeDifference= "+timeDifference);
  
     //Time elapsed in seconds
     me.timeElapsed = Math.abs(timeDifference / 1000);
+    console.log("timeElapsed= "+me.timeElapsed);
  
     //Time remaining in seconds
     //var timeRemaining = me.totalTime - me.timeElapsed; 
-    var timeRemaining = me.timeElapsed;
+    var timeRemaining = 65- me.timeElapsed;
+    console.log("timeRemaining= "+timeRemaining);
  
     //Convert seconds into minutes and seconds
     minutes = Math.floor(timeRemaining / 60);
+    console.log("minutes= "+minutes);
+
     seconds = Math.floor(timeRemaining) - (60 * minutes);
- 
+    console.log("seconds= "+seconds);
+
     //Display minutes, add a 0 to the start if less than 10
     var result = (minutes < 10) ? "0" + minutes : minutes; 
  
@@ -119,6 +126,7 @@ gameState3.prototype={
     result += (seconds < 10) ? ":0" + seconds : ":" + seconds;
  
     me.timeLabel.text = result;
+    console.log("result= "+result);
     }
 };
 
@@ -182,11 +190,14 @@ function startgame()
 
 function preload1()
 {
-
+    game.load.image('leaderboard', 'assets/background/leaderboard.jpeg');
 };
 
 function create1()
 {
+    var leaderboard_background = game.add.sprite(0, 0, 'leaderboard');
+    leaderboard_background.scale.setTo(4,4);
+
     if (player1==1) 
     {
         // game.add.text(600,150,"Player 1 Wins",{font: "Algerian" ,fontSize: '25px', fill:'#FFF'});
@@ -278,7 +289,7 @@ function update2()
 function preload3()
 {
 	game.load.image('ground', 'assets/background/platform.png');
-	game.load.image('sky', 'assets/background/sky.png');
+	game.load.image('sky', 'assets/background/orange2.png');
 	game.load.image('plane1', 'assets/plane/p2.png');
 	game.load.image('plane2', 'assets/plane/p3.png');  //Aarish
 	game.load.audio('plane_flying', 'assets/audio/plane_flying.mp3');
@@ -308,7 +319,7 @@ function create3()
 	
 
 	sky = game.add.sprite(0, 0, 'sky');
-	sky.scale.setTo(1.8,1.5);
+	sky.scale.setTo(3.2,3.2);
 
     bmd_1 = game.add.bitmapData(1400,40);
     bmd_1.ctx.beginPath();
@@ -410,11 +421,11 @@ function create3()
     {
 
         me.updateTimer();
-        if (minutes==0&&seconds==59&&timeoutflag==1) 
+        if (minutes==0&&seconds==59) //&&timeoutflag==1) 
         {
-            console.log("time up");
-            game.state.start('gameState3');
-            timeoutflag=0;
+            // console.log("time up");
+            // game.state.start('gameState3');
+            // timeoutflag=0;
         }
     });
 
@@ -575,12 +586,14 @@ function update3()
     // game.debug.body(healthBar_2);
     ratio1=1- (1400-healthBar_1.width)/1400;
     ratio2= (1800-healthBar_2.width)/400;
-    console.log("r1= "+ratio1);
-    console.log("r2= "+ratio2);
+    // console.log("r1= "+ratio1);
+    // console.log("r2= "+ratio2);
     // ratio1= healthBar_1.width/healthBar_2.width;
     // console.log("ratio= "+ratio1);
 
-    if(minutes == 0 && seconds >= 5)
+
+    // REMEMBER TO UNCOMMENT LATER
+    if(minutes == 0 && seconds <= 0)
     {
 
         if(ratio1 > ratio2)
@@ -600,12 +613,12 @@ function update3()
 
 function hit_1(plane1, bullet2)
 {
-    console.log("In hit1");
+    // console.log("In hit1");
 
     bullet2.kill();
     healthBar_1.width-= 10;
 
-    console.log("Healthbar1: ",healthBar_1.width);
+    // console.log("Healthbar1: ",healthBar_1.width);
 
     if(healthBar_1.width <= 0)
     {
