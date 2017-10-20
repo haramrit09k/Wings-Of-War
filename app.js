@@ -18,8 +18,10 @@ app.use(express.static(__dirname));
 app.use(bodyParser.urlencoded({ extended: true })); 
 
 app.get('/',function(req,res){
+    
 
     res.sendFile(__dirname+'/index.html');
+
 
 });
 
@@ -42,20 +44,49 @@ app.post('/send', function(req, res) {
 
 function sendText(){
 
-
-      var stext = {
-            user : user,
-          };
-
-
-      MongoClient.connect(url, function(err, db) {
+ MongoClient.connect(url, function(err, db) {
+  var wins;
+  var count = 0;
         assert.equal(null, err);
-        db.collection("scores").insert(stext, function(err, r) {
-          assert.equal(null, err);
-          assert.equal(1, r.insertedCount);
+             db.collection('scores').find( { user:user } ).count(function(err,results){
+                     count = results;
+                     if (count>0) 
+                       {
+                          wins = wins + 1;
+                          // console.log("here"+user);
 
-            db.close();
-          });
+                          db.collection('scores').update(
+                                 { user: user },
+                                 { $inc: { wins: 1} }
+                                ) 
+                       }
+                       else
+                       {
+                          wins = 1;
+                          var stext = {
+                              user : user,
+                              wins : wins
+                            };
+
+                          // console.log("there"+user);
+
+                            db.collection("scores").insert(stext, function(err, r) {
+                              assert.equal(null, err);
+                              assert.equal(1, r.insertedCount);
+
+                                db.close();
+                            });
+                       }
+
+                     
+               });
+
+             // console.log(count);
+             
+
+      
+
+     
 
 
 
@@ -75,9 +106,13 @@ app.get('/get', function(req, res) {
   
     //   });
 
+
     var results;
     MongoClient.connect(url, function(err, db) {
        assert.equal(null, err);
+       
+               
+       
                 db.collection('scores').find().sort().toArray(function(err, results){
                       // document.write(results);
                       // console.log(results);

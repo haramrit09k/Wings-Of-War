@@ -34,6 +34,13 @@ var u1t;
 var u2t;
 var bullet_fire;
 var bullet_hit;
+var plane1_takeoff= 0;
+var plane2_takeoff= 0;
+var nuke_status1= 0;
+var nuke_status2= 0;
+var nuke_drop;
+
+
 
 //HOME PAGE
 var gameState0 = function()
@@ -113,7 +120,7 @@ gameState3.prototype={
  
     //Time remaining in seconds
     //var timeRemaining = me.totalTime - me.timeElapsed; 
-    var timeRemaining = 65- me.timeElapsed;
+    var timeRemaining = 150 - me.timeElapsed;
     // console.log("timeRemaining= "+timeRemaining);
  
     //Convert seconds into minutes and seconds
@@ -140,13 +147,13 @@ gameState4.prototype={
     update:update4
 };
 
-game.state.add('gameState0',gameState0);         
+game.state.add('gameState0',gameState0);     //home   
 game.state.add('gameState1',gameState1);    // leaderboard    
 game.state.add('gameState2',gameState2);        
-game.state.add('gameState3',gameState3);        
-game.state.add('gameState4',gameState4);        
+game.state.add('gameState3',gameState3);     // main game
+game.state.add('gameState4',gameState4);      //inst  
 
-game.state.start('gameState3'); // CHANGE IT TO 0 LATER
+game.state.start('gameState0'); // CHANGE IT TO 0 LATER
 
 
 
@@ -156,35 +163,53 @@ game.state.start('gameState3'); // CHANGE IT TO 0 LATER
 function preload0()
 {
 	game.load.image('back', 'assets/background/b2.jpg');
-	game.load.image('logo', 'assets/background/logo3.png');
-	game.load.image('battle_button', 'assets/buttons/battle3.png');
-	game.load.image('inst_button', 'assets/buttons/instrctions.jpg');
+	game.load.image('logo', 'assets/background/logo1.png');
+	game.load.image('battle_button', 'assets/buttons/battle5.png');
+	game.load.image('inst_button', 'assets/buttons/instructions.png');
+	game.load.image('leaderboard_button', 'assets/buttons/leaderboard.png');
+	// game.load.image('inst_button', 'assets/buttons/instrctions.jpg');
 	game.load.image('fullButton', 'assets/buttons/full.png');
+
 };
 
 function create0()
 {
+	user1  = prompt("Enter name of player 1");
+    user2  = prompt("Enter name of player 2");
+    
 	game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
     game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
 
 	home_background = game.add.sprite(0, 0, 'back');
 	home_background.scale.setTo(1.9,1.6);
 
-	logo = game.add.sprite(50, 45, 'logo');
-	logo.scale.setTo(1.2,1.2);
+	logo = game.add.sprite(50, 60, 'logo');
+	logo.scale.setTo(1,1);
 
-	battle_button = game.add.button(1100, 500, 'battle_button', startgame, this, 2, 1, 0);
-	battle_button.scale.setTo(0.8,0.8);
+	battle_button = game.add.button(1020, 400, 'battle_button', startgame, this, 2, 1, 0);
+	battle_button.scale.setTo(0.5,0.5);
+	battle_button = game.add.button(950, 500, 'inst_button', startinst, this, 2, 1, 0);
+	battle_button.scale.setTo(0.5,0.5);
+	battle_button = game.add.button(945, 600, 'leaderboard_button', startlead, this, 2, 1, 0);
+	battle_button.scale.setTo(0.5,0.5);
 
 	fullButton = game.add.button(1250, 20, 'fullButton', goFull, this, 2, 1, 0);
 	fullButton.scale.setTo(0.1,0.1);
 
-    user1  = prompt("Enter name of player 1");
-   
-    user2  = prompt("Enter name of player 2");
+
     
 
 };
+
+function startinst()
+{
+	game.state.start('gameState4');
+}
+
+function startlead()
+{
+	game.state.start('gameState1');
+}
 
 function update0()
 {
@@ -204,22 +229,35 @@ function startgame()
 function preload1()
 {
     game.load.image('leaderboard', 'assets/background/leaderboard.jpg');
+    game.load.image('replay', 'assets/buttons/replay.png');
+
 };
 
 function create1()
 {
+	// user1 = "akash";
+    // user2 = "aarish";
+	
     var leaderboard_background = game.add.sprite(0, 0, 'leaderboard');
     leaderboard_background.scale.setTo(0.818,0.75);
 
+    replay = game.add.button(1160, 650, 'replay', play_again, this, 2, 1, 0);
+	replay.scale.setTo(0.5,0.5);
+
+	
+	game.add.text(800,100,"Leaderboard",{font: "Algerian" ,fontSize: '40px', fill:'#FFF'});
+	game.add.text(800,250,"Player",{font: "Algerian" ,fontSize: '30px', fill:'#FFF'});
+	game.add.text(1000,250,"Wins",{font: "Algerian" ,fontSize: '30px', fill:'#FFF'});
+    
     if (player1==1) 
     {
-        // game.add.text(600,150,"Player 1 Wins",{font: "Algerian" ,fontSize: '25px', fill:'#FFF'});
+        // game.add.text(800,100,"Player 1 Wins",{font: "Algerian" ,fontSize: '25px', fill:'#FFF'});
         user = user1;
         player = player1;
     }
     else
     {
-        // game.add.text(600,150,"Player 2 Wins",{font: "Algerian" ,fontSize: '25px', fill:'#FFF'});
+        // game.add.text(800,100,"Player 2 Wins",{font: "Algerian" ,fontSize: '25px', fill:'#FFF'});
         user = user2;
         player = player2;
     }
@@ -242,12 +280,12 @@ function create1()
                             success:function(response){
                             var counter = 0;
                             response.sort(function(a, b){
-                                    return b.score - a.score;
+                                    return b.wins - a.wins;
                                 });
                             console.log(response);  
                             while(response[counter]!=""&&counter<5){
-                                game.add.text(550,counter*75+225,response[counter].user,{font: "Algerian" ,fontSize: '25px', fill:'#FFF'});
-                                game.add.text(800,counter*75+225,response[counter].score,{font: "Algerian" ,fontSize: '25px', fill:'#FFF'});
+                                game.add.text(800,counter*75+320,response[counter].user,{font: "Algerian" ,fontSize: '25px', fill:'#FFF'});
+                                game.add.text(1020,counter*75+320,response[counter].wins,{font: "Algerian" ,fontSize: '25px', fill:'#FFF'});
                                 counter++;
                             }
                             // console.log(response[0].user);
@@ -262,7 +300,7 @@ function create1()
                            
                             });  
 
-        game.add.text(600,150,"Total no. of wins = "+wins,{font: "Algerian" ,fontSize: '25px', fill:'#FFF'});
+        // game.add.text(600,150,"Total no. of wins = "+wins,{font: "Algerian" ,fontSize: '25px', fill:'#FFF'});
 
     
 };
@@ -271,6 +309,13 @@ function update1()
 {
 
 };
+
+function play_again()
+{
+	nuke_status1= 0;
+	nuke_status2= 0;
+	game.state.start("gameState0");
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -308,7 +353,10 @@ function preload3()
     game.load.audio('plane_flying', 'assets/audio/plane_flying.mp3');
     game.load.audio('bullet_fire', 'assets/audio/bullet_fire.mp3');
 	game.load.audio('bullet_hit', 'assets/audio/bullet_hit.mp3');
+	game.load.audio('nuke_drop', 'assets/audio/nuke.mp3');
     game.load.image('bullet', 'assets/fireball1.png');
+    game.load.image('nuke', 'assets/nuke1.png');
+    game.load.image('nukem', 'assets/nukem1.png');
     game.load.spritesheet('blast', 'assets/bullet_hit.png',512,512);
 };
 
@@ -323,6 +371,7 @@ function create3()
     // var barConfig = {x: 200, y: 100};
     // this.myHealthBar = new HealthBar(this.game, barConfig);
 
+
 	game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
     game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
 	
@@ -331,8 +380,10 @@ function create3()
 
 	//Plane Audio
     plane_flying = game.add.audio('plane_flying', 1, true);
+    plane_flying1 = game.add.audio('plane_flying', 1, true);
     bullet_hit = game.add.audio('bullet_hit', 1, true);
 	bullet_fire = game.add.audio('bullet_fire', 1, true);
+	nuke_drop = game.add.audio('nuke_drop', 1, true);
 	// plane_flying.addMarker('plane_flying', 0, 2);
 	
 
@@ -345,8 +396,8 @@ function create3()
     bmd_1.ctx.fillStyle = 'black';
     bmd_1.ctx.fill();
 
-    user1 = "akash";
-    user2 = "aarish";
+    // user1 = "akash";
+    // user2 = "aarish";
 
     u1t = game.add.text(50,25,user1,{ font:'25px Algerian', fill: '#fff'});
     u1t.anchor.setTo(0,0);
@@ -401,7 +452,7 @@ function create3()
     //  Because our bullet is drawn facing up, we need to offset its rotation:
     bullet1.bulletAngleOffset = 0;
     //  The speed at which the bullet is fired
-    bullet1.bulletSpeed = 1000;
+    bullet1.bulletSpeed = 1400;
     bullet1.trackSprite(plane1, 0, 18, true);
     
 
@@ -411,8 +462,23 @@ function create3()
     //  Because our bullet is drawn facing up, we need to offset its rotation:
     bullet2.bulletAngleOffset = 0;
     //  The speed at which the bullet is fired
-    bullet2.bulletSpeed = -1000;
+    bullet2.bulletSpeed = -1400;
     bullet2.trackSprite(plane2, 0, 18, true);
+
+    nuke1 = game.add.weapon(1, 'nuke');
+    nuke1.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS;
+    nuke1.bulletAngleOffset = 0;
+    nuke1.bulletSpeed = 1500;
+    nuke1.trackSprite(plane1, 0, 18, true);
+    // nuke1.scale.setTo(0.15,0.15);
+
+    nuke2 = game.add.weapon(1, 'nukem');
+    nuke2.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS;
+    nuke2.bulletAngleOffset = 0;
+    nuke2.bulletSpeed = -1500;
+    nuke2.trackSprite(plane2, 0, 18, true);
+    // nuke2.scale.setTo(0.15,0.15);
+
 
     // game.physics.enable(bullet1, Phaser.Physics.ARCADE);
     // game.physics.enable(bullet2, Phaser.Physics.ARCADE);
@@ -451,6 +517,8 @@ function create3()
         {
             console.log("time up");
             game.state.start('gameState1');
+            plane_flying.stop();
+			plane_flying1.stop();
             // timeoutflag=0;
         }
     });
@@ -469,16 +537,35 @@ function update3()
         bullet_fire.play('', 0, 1, false);
     }
 
+    if (v.isDown && nuke_status1 == 0 && (minutes ==0  || seconds < 20)) 
+    {
+        nuke1.fire();
+        nuke_status1= 1;
+        nuke_drop.play('', 0, 1, false);
+        // bullet_fire.play('', 0, 1, false);
+    }
+
     if (k.isDown) 
     {
         bullet2.fire();
         bullet_fire.play('', 0, 1, false);
     }
 
+    if (l.isDown && nuke_status2 == 0 && (minutes ==0  || seconds < 20)) 
+    {
+        nuke2.fire();
+        nuke_status2= 1;
+        nuke_drop.play('', 0, 1, false);
+        console.log("In here");
+        // bullet_fire.play('', 0, 1, false);
+    }
+
 	game.physics.arcade.overlap(plane1, ground, touch_ground_1, null, this);
 	game.physics.arcade.overlap(plane2, ground, touch_ground_2, null, this);    
     game.physics.arcade.overlap(plane1, bullet2.bullets, hit_1, null , this);
     game.physics.arcade.overlap(plane2, bullet1.bullets, hit_2, null , this);
+    game.physics.arcade.overlap(plane1, nuke2.bullets, hit_nuke_1, null , this);
+    game.physics.arcade.overlap(plane2, nuke1.bullets, hit_nuke_2, null , this);
 
 	// game.physics.arcade.overlap(plane1, plane2, hit_1, null , this);
 
@@ -518,23 +605,25 @@ function update3()
     if (w.isDown)
     {
     	if (count == 0) {
-    		plane_flying.play('', 0, 1, true);
+    		plane_flying1.play('', 0, 1, true);
     		count++;
     	}
     	else {
-        plane_flying.resume();
+        plane_flying1.resume();
     	}
     }
     else
     {
-    	plane_flying.pause();
+    	plane_flying1.pause();
     }
 
     		// console.log("Count = "+count);
 
     if (plane1.y <30)
     {
-    	game.physics.arcade.velocityFromAngle(plane1.angle, 100, plane1.body.velocity);
+    	// count++;
+    	game.physics.arcade.velocityFromAngle(plane1.angle, 300, plane1.body.velocity);
+    	// console.log(game.physics.arcade.velocityFromAngle);
     	plane1.y = plane1.y + 10;
     }
 
@@ -625,6 +714,8 @@ function update3()
             player2= 1;
 
         game.state.start('gameState1');
+        plane_flying.stop();
+	plane_flying1.stop();
     }
 
     game.world.setBounds(0, 0, 1366, 768);
@@ -650,7 +741,7 @@ function hit_1(plane1, bullet2)
      },5);
 
     bullet2.kill();
-    healthBar_1.width-= 10;
+    healthBar_1.width-= 60;
 
     // console.log("Healthbar1: ",healthBar_1.width);
 
@@ -658,6 +749,8 @@ function hit_1(plane1, bullet2)
     {
         player2 = 1;
         game.state.start('gameState1');
+        plane_flying.stop();
+	plane_flying1.stop();
         console.log("game over player 2 wins");  
     }
 }
@@ -676,7 +769,7 @@ function hit_2(plane2, bullet1)
      },5);
 
     bullet1.kill();
-    healthBar_2.width+= 2.8;
+    healthBar_2.width+=16.8;
 
     console.log("Healthbar2: ",healthBar_2.width);
 
@@ -684,8 +777,61 @@ function hit_2(plane2, bullet1)
     {
         player1 = 1;
         game.state.start('gameState1');
+        plane_flying.stop();
+	plane_flying1.stop();
          console.log("game over player 1 wins"); 
     }
+}
+
+function hit_nuke_1(plane1, nuke2)
+{
+    // bullet_hit.play('', 0, 1, false);
+    // console.log("In hit1");
+    // blast = game.add.sprite(plane1.x,plane1.y,'blast');
+    // blast.scale.setTo(0.05,0.05);
+    // blast.animations.add('blastHim',[0,1,2,3,4,5,6,7,8],100,false);
+    // blast.animations.play('blastHim');
+    // setTimeout(function(){ 
+    //     blast.scale.setTo(0.00000005,0.00000005);
+    //     blast.visible=false;
+    //  },5);
+
+    nuke2.kill();
+    nuke_drop.stop();
+    healthBar_1.width= 0;
+
+    player2 = 1;
+    game.state.start('gameState1');
+    plane_flying.stop();
+	plane_flying1.stop();
+    console.log("game over player 2 wins");
+
+    // console.log("Healthbar1: ",healthBar_1.width);
+}
+
+function hit_nuke_2(plane2, nuke1)
+{
+    // bullet_hit.play('', 0, 1, false);
+    // console.log("In hit1");
+    // blast = game.add.sprite(plane1.x,plane1.y,'blast');
+    // blast.scale.setTo(0.05,0.05);
+    // blast.animations.add('blastHim',[0,1,2,3,4,5,6,7,8],100,false);
+    // blast.animations.play('blastHim');
+    // setTimeout(function(){ 
+    //     blast.scale.setTo(0.00000005,0.00000005);
+    //     blast.visible=false;
+    //  },5);
+
+    nuke1.kill();
+    healthBar_2.width= 0;
+	nuke_drop.stop();
+    player1 = 1;
+    game.state.start('gameState1');
+    plane_flying.stop();
+	plane_flying1.stop();
+    console.log("game over player 1 wins");
+
+    // console.log("Healthbar1: ",healthBar_1.width);
 }
 
 function touch_ground_1()
@@ -706,6 +852,8 @@ function touch_ground_1()
 
             player2 = 1;
             game.state.start('gameState1');
+            plane_flying.stop();
+	plane_flying1.stop();
     
     }
 	// console.log("touched");
@@ -733,6 +881,8 @@ function touch_ground_2()
 
             player1 = 1;
             game.state.start('gameState1');
+            plane_flying.stop();
+	plane_flying1.stop();
     
     }
 
