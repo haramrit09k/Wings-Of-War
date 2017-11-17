@@ -1,4 +1,4 @@
-var express = require('express');
+ var express = require('express');
 var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io').listen(server);
@@ -52,9 +52,9 @@ function sendText(){
                      count = results;
                      if (count>0) 
                        {
-                          wins = wins + 1;
+                          wins = wins + status;
                           // console.log("here"+user);
-
+                          // var s = status + 0;
                           db.collection('scores').update(
                                  { user: user },
                                  { $inc: { wins: 1} }

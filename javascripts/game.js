@@ -24,8 +24,8 @@ var ratio1;
 var ratio2;
 var seconds;
 var minutes;
-var user1;
-var user2;
+var user1 = "";
+var user2 = "";
 var user;
 var player;
 var timeoutflag= 1;
@@ -39,7 +39,8 @@ var plane2_takeoff= 0;
 var nuke_status1= 0;
 var nuke_status2= 0;
 var nuke_drop;
-
+var game_played_status_for_replay= 0;
+var go_to_home;
 
 
 //HOME PAGE
@@ -174,8 +175,23 @@ function preload0()
 
 function create0()
 {
-	user1  = prompt("Enter name of player 1");
-    user2  = prompt("Enter name of player 2");
+	while(user1== null ||user1=="")
+	{
+		user1  = prompt("Enter name of player 1");
+		console.log(user1);
+	}
+	while (user2 == null ||user2=="")
+	{
+		console.log("1");
+		user2  = prompt("Enter name of player 2");
+		console.log(user2);
+		while(user1==user2)
+			user2  = prompt("Enter name of player 2");
+			
+
+		console.log("2");
+	}
+    	 
     
 	game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
     game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
@@ -230,20 +246,29 @@ function preload1()
 {
     game.load.image('leaderboard', 'assets/background/leaderboard.jpg');
     game.load.image('replay', 'assets/buttons/replay.png');
-
+    game.load.image('home', 'assets/buttons/home.png');
 };
 
 function create1()
 {
 	// user1 = "akash";
     // user2 = "aarish";
-	
+
+    count= 0;
+
+
     var leaderboard_background = game.add.sprite(0, 0, 'leaderboard');
     leaderboard_background.scale.setTo(0.818,0.75);
 
-    replay = game.add.button(1160, 650, 'replay', play_again, this, 2, 1, 0);
-	replay.scale.setTo(0.5,0.5);
+    go_to_home = game.add.button(1160, 25, 'home', go_home, this, 2, 1, 0);
+	go_to_home.scale.setTo(0.5,0.5);
 
+
+    if(game_played_status_for_replay == 1)
+    {
+    	replay = game.add.button(1160, 650, 'replay', play_again, this, 2, 1, 0);
+		replay.scale.setTo(0.5,0.5);
+	}	
 	
 	game.add.text(800,100,"Leaderboard",{font: "Algerian" ,fontSize: '40px', fill:'#FFF'});
 	game.add.text(800,250,"Player",{font: "Algerian" ,fontSize: '30px', fill:'#FFF'});
@@ -317,6 +342,11 @@ function play_again()
 	game.state.start("gameState0");
 }
 
+function go_home()
+{
+	game.state.start("gameState0");
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -371,6 +401,7 @@ function create3()
     // var barConfig = {x: 200, y: 100};
     // this.myHealthBar = new HealthBar(this.game, barConfig);
 
+    game_played_status_for_replay= 1;
 
 	game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
     game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
@@ -427,11 +458,13 @@ function create3()
     game.physics.arcade.enable(plane1);
 	plane1.enableBody=true;
     plane1.body.bounce.y = 0;
+    // plane1.body.gravity.y = 10;
     // plane1.body.collideWorldBounds = true;
 
 	game.physics.arcade.enable(plane2);
 	plane2.enableBody=true;
     plane2.body.bounce.y = 0;
+   	// plane2.body.gravity.y = 10;
 
 	ground = game.add.sprite(0, 735, 'ground');
 	ground.scale.setTo(3.5,1);
@@ -453,7 +486,7 @@ function create3()
     bullet1.bulletAngleOffset = 0;
     //  The speed at which the bullet is fired
     bullet1.bulletSpeed = 1400;
-    bullet1.trackSprite(plane1, 0, 18, true);
+    bullet1.trackSprite(plane1, 55, 18, true);
     
 
     bullet2 = game.add.weapon(1, 'bullet');
@@ -464,21 +497,26 @@ function create3()
     //  The speed at which the bullet is fired
     bullet2.bulletSpeed = -1400;
     bullet2.trackSprite(plane2, 0, 18, true);
-
     nuke1 = game.add.weapon(1, 'nuke');
     nuke1.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS;
     nuke1.bulletAngleOffset = 0;
+    // nuke1.bulletSpeed = 1500;
+    // nuke1.bulletGravity= 1000;
+    // nuke1.body.gravity.y = 1000;
     nuke1.bulletSpeed = 1500;
-    nuke1.trackSprite(plane1, 0, 18, true);
+    nuke1.trackSprite(plane1, 50, 18, true);
+
     // nuke1.scale.setTo(0.15,0.15);
 
     nuke2 = game.add.weapon(1, 'nukem');
     nuke2.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS;
     nuke2.bulletAngleOffset = 0;
     nuke2.bulletSpeed = -1500;
-    nuke2.trackSprite(plane2, 0, 18, true);
+    nuke2.trackSprite(plane2, -25, 18, true);
+
     // nuke2.scale.setTo(0.15,0.15);
 
+    // weapon.bullets.setAll('body.gravity.y', 200);
 
     // game.physics.enable(bullet1, Phaser.Physics.ARCADE);
     // game.physics.enable(bullet2, Phaser.Physics.ARCADE);
@@ -917,6 +955,7 @@ function preload4()
     game.load.image("v", "assets/instructions/v.png");
     game.load.image("k", "assets/instructions/k.png");
     game.load.image("l", "assets/instructions/l.png");
+    game.load.image('home', 'assets/buttons/home.png');
 };
 
 function create4()
@@ -924,6 +963,9 @@ function create4()
 
     var bg = game.add.sprite(0,0,'background');
     bg.scale.setTo(0.7,0.75);
+
+    go_to_home = game.add.button(1160, 25, 'home', go_home, this, 2, 1, 0);
+	go_to_home.scale.setTo(0.5,0.5);
 
     var movement1 = game.add.sprite(400,200,'movement1');
     movement1.scale.setTo(0.6,0.6);
